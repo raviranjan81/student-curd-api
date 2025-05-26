@@ -19,9 +19,9 @@ app.use(express.urlencoded({
 app.use(express.json())
 
 app.use(cors({
-    origin: 'http://localhost:5173'
-}))
-
+  origin: ["http://localhost:5173", "https://student-curd-api-y9yw.onrender.com/api/v1/students"], 
+  credentials: true
+}));
 
 app.use('/api/v1/students', StudentRouter);
 
