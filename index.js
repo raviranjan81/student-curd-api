@@ -7,6 +7,7 @@ import { Server } from 'socket.io'
 import http from 'http'
 import connectDB from './config/db.js'
 import StudentRouter from './routes/student.route.js'
+import TogelRouter from './routes/togel.route.js'
 
 const app = express()
 const server = http.createServer(app); // ✅ Socket.IO will attach to this
@@ -27,6 +28,7 @@ app.use(cors()) // Use CORS for REST API routes
 
 // REST API
 app.use('/api/v1/students', StudentRouter);
+app.use('/api/v1/togel', TogelRouter);
 const router = express.Router()
 // WebSocket
 io.on("connection", (socket) => {
