@@ -1,5 +1,5 @@
 import TogelModel from "../models/togel.model.js";
-
+import { sendToggleUpdateToESP32 } from '../utils/websocketESP32.js';
 // ✅ Get all toggles
 export const getAllToggles = async (req, res) => {
   try {
@@ -56,13 +56,12 @@ export const createTogel = async (req, res) => {
   }
 };
 
-// ✅ Get toggle by type
+
 export const updateTogelStatus = async (req, res) => {
   try {
     const { type } = req.params;
-    const status = req.body?.status; // may be undefined
+    const status = req.body?.status;
 
-    // 1️⃣ Find the toggle by type
     const toggle = await TogelModel.findOne({ type });
 
     if (!toggle) {
@@ -72,27 +71,18 @@ export const updateTogelStatus = async (req, res) => {
       });
     }
 
-    // 2️⃣ If status is provided, update it
     if (typeof status === "boolean") {
       toggle.status = status;
       await toggle.save();
 
-      // 3️⃣ Emit real-time update if status changed
-      req.io.emit("toggle-updated", {
-        type: toggle.type,
-        status: toggle.status
-      });
+      req.io?.emit("toggle-updated", { type: toggle.type, status: toggle.status });
+      sendToggleUpdateToESP32({ type: toggle.type, status: toggle.status });
     }
 
-    // 4️⃣ Always return current data
     res.json({
       success: true,
-      data: {
-        type: toggle.type,
-        status: toggle.status
-      }
+      data: { type: toggle.type, status: toggle.status }
     });
-
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

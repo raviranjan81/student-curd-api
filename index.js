@@ -8,15 +8,25 @@ import http from 'http'
 import connectDB from './config/db.js'
 import StudentRouter from './routes/student.route.js'
 import TogelRouter from './routes/togel.route.js'
+import { setupESP32WebSocket } from './utils/websocketESP32.js'
 
 const app = express()
-const server = http.createServer(app); // ✅ Socket.IO will attach to this
+const server = http.createServer(app)
+
+setupESP32WebSocket(server)
+
 const io = new Server(server, {
   cors: {
-    origin: "*", // change this to specific domains in production
+    origin: "*",
     methods: ["GET", "POST"]
   }
-});
+})
+
+
+
+
+
+
 
 connectDB()
 
@@ -36,7 +46,6 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/students', StudentRouter);
 app.use('/api/v1/togel', TogelRouter);
-const router = express.Router()
 
 
 
@@ -56,7 +65,6 @@ io.on("connection", (socket) => {
 
 
 
-// ✅ START SERVER with WebSocket attached
 server.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
