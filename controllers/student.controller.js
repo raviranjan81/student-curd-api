@@ -1,5 +1,21 @@
 import StudentModel from "../models/student.model.js";
 
+export const test = async (req, res) => {
+  try {
+    const students = await StudentModel.find().sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      message: "Fetched All Students!",
+      totalStudents: students.length,
+      students,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 export const fetchAllStudents = async (req, res) => {
   try {
     const students = await StudentModel.find().sort({ createdAt: -1 });
