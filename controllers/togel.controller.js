@@ -26,7 +26,10 @@ export const createTogel = async (req, res) => {
     if (typeof status !== "boolean" || !type) {
       return res
         .status(400)
-        .json({ success: false, message: "Please provide valid status and type." });
+        .json({
+          success: false,
+          message: "Please provide valid status and type.",
+        });
     }
 
     const existing = await TogelModel.findOne({ type });
@@ -54,26 +57,41 @@ export const createTogel = async (req, res) => {
 };
 
 // ✅ Get toggle by type
-export const getTogelByType = async (req, res) => {
+export const updateTogelStatus = async (req, res) => {
   try {
     const { type } = req.params;
+    const { status } = req.body;
 
-    const toggle = await TogelModel.findOne({ type });
-    if (!toggle) {
-      return res.status(404).json({
-        success: false,
-        message: `No toggle found for type: ${type}`,
-      });
+    if (typeof status !== "boolean") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status value" });
     }
+
+    const toggle = await TogelModel.findOneAndUpdate(
+      { type },
+      { status },
+      { new: true }
+    );
+
+    if (!toggle) {
+      return res
+        .status(404)
+        .json({ success: false, message: `No toggle found for type: ${type}` });
+    }
+
+    // Emit real-time update using Socket.IO
+    req.io.emit("toggle-updated", {
+      type: toggle.type,
+      status: toggle.status,
+    });
 
     res.json({
       success: true,
+      message: "Status updated and broadcasted",
       toggle,
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 };

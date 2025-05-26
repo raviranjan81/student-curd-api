@@ -30,6 +30,13 @@ app.use(cors()) // Use CORS for REST API routes
 app.use('/api/v1/students', StudentRouter);
 app.use('/api/v1/togel', TogelRouter);
 const router = express.Router()
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+
 // WebSocket
 io.on("connection", (socket) => {
   console.log("⚡ New client connected:", socket.id);
