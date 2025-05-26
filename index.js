@@ -33,6 +33,7 @@ app.use((req, res, next) => {
 });
 
 
+
 app.use('/api/v1/students', StudentRouter);
 app.use('/api/v1/togel', TogelRouter);
 const router = express.Router()
