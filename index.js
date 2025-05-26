@@ -27,14 +27,16 @@ app.use(express.json())
 app.use(cors()) // Use CORS for REST API routes
 
 // REST API
-app.use('/api/v1/students', StudentRouter);
-app.use('/api/v1/togel', TogelRouter);
-const router = express.Router()
-
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
+
+
+app.use('/api/v1/students', StudentRouter);
+app.use('/api/v1/togel', TogelRouter);
+const router = express.Router()
+
 
 
 // WebSocket

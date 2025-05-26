@@ -61,6 +61,7 @@ export const updateTogelStatus = async (req, res) => {
   try {
     const { type } = req.params;
     const { status } = req.body;
+    
 
     if (typeof status !== "boolean") {
       return res
@@ -73,6 +74,7 @@ export const updateTogelStatus = async (req, res) => {
       { status },
       { new: true }
     );
+
 
     if (!toggle) {
       return res
@@ -88,8 +90,10 @@ export const updateTogelStatus = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Status updated and broadcasted",
-      toggle,
+      data:{
+        type: toggle.type,
+        status: toggle.status,
+      },
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
